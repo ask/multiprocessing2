@@ -49,7 +49,7 @@ import array
 
 from threading import Lock, RLock, Semaphore, BoundedSemaphore
 from threading import Event, Condition
-from queue import Queue
+from Queue import Queue
 
 from .connection import Pipe
 

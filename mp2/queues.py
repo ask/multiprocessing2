@@ -42,7 +42,7 @@ import time
 import weakref
 import errno
 
-from queue import Empty, Full
+from Queue import Empty, Full
 import _multiprocessing
 from .connection import Pipe
 from .synchronize import Lock, BoundedSemaphore, Semaphore, Condition

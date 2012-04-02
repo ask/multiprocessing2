@@ -93,7 +93,7 @@ class Process(object):
     _Popen = None
 
     def __init__(self, group=None, target=None, name=None, args=(), kwargs={},
-                 *, daemon=None):
+                 daemon=None, **_):
         assert group is None, 'group argument must be None for now'
         count = next(_current_process._counter)
         self._identity = _current_process._identity + (count,)

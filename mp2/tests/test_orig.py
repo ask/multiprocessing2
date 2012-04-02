@@ -7,7 +7,7 @@
 import _multiprocessing
 
 import unittest
-import queue as pyqueue
+import Queue as pyqueue
 import time
 import io
 import itertools

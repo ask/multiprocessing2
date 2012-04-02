@@ -56,27 +56,46 @@ def assert_spawning(self):
 #
 
 from pickle import Pickler
-from copyreg import dispatch_table
 
-class ForkingPickler(Pickler):
-    _extra_reducers = {}
-    def __init__(self, *args):
-        Pickler.__init__(self, *args)
-        self.dispatch_table = dispatch_table.copy()
-        self.dispatch_table.update(self._extra_reducers)
-    @classmethod
-    def register(cls, type, reduce):
-        cls._extra_reducers[type] = reduce
+if sys.version_info[0] == 3:
+    from copyreg import dispatch_table
 
-def _reduce_method(m):
-    if m.__self__ is None:
-        return getattr, (m.__class__, m.__func__.__name__)
-    else:
-        return getattr, (m.__self__, m.__func__.__name__)
-class _C:
-    def f(self):
-        pass
-ForkingPickler.register(type(_C().f), _reduce_method)
+    class ForkingPickler(Pickler):
+        _extra_reducers = {}
+        def __init__(self, *args):
+            Pickler.__init__(self, *args)
+            self.dispatch_table = dispatch_table.copy()
+            self.dispatch_table.update(self._extra_reducers)
+        @classmethod
+        def register(cls, type, reduce):
+            cls._extra_reducers[type] = reduce
+
+    def _reduce_method(m):
+        if m.__self__ is None:
+            return getattr, (m.__class__, m.__func__.__name__)
+        else:
+            return getattr, (m.__self__, m.__func__.__name__)
+    class _C:
+        def f(self):
+            pass
+    ForkingPickler.register(type(_C().f), _reduce_method)
+else:
+    class ForkingPickler(Pickler):
+        dispatch = Pickler.dispatch.copy()
+
+        @classmethod
+        def register(cls, type, reduce):
+            def dispatcher(self, obj):
+                rv = reduce(obj)
+                self.save_reduce(obj=obj, *rv)
+            cls.dispatch[type] = dispatcher
+
+    def _reduce_method(m):
+        if m.im_self is None:
+            return getattr, (m.im_class, m.im_func.func_name)
+        else:
+            return getattr, (m.im_self, m.im_func.func_name)
+    ForkingPickler.register(type(ForkingPickler.save), _reduce_method)
 
 
 def _reduce_method_descriptor(m):

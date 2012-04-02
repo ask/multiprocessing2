@@ -39,7 +39,7 @@ __all__ = ['Pool']
 #
 
 import threading
-import queue
+import Queue as queue
 import itertools
 import collections
 import time

@@ -272,7 +272,7 @@ class _ConnectionBase:
         self._check_closed()
         self._check_readable()
         buf = self._recv_bytes()
-        return pickle.loads(buf.getbuffer())
+        return pickle.loads(buf.getvalue())
 
     def poll(self, timeout=0.0):
         """Whether there is any input available to be read"""
@@ -330,7 +330,7 @@ if win32:
                         nread, err = ov.GetOverlappedResult(True)
                         if err == 0:
                             f = io.BytesIO()
-                            f.write(ov.getbuffer())
+                            f.write(ov)
                             return f
                         elif err == win32.ERROR_MORE_DATA:
                             return self._get_more_data(ov, maxsize)
@@ -350,7 +350,7 @@ if win32:
             return bool(wait([self], timeout))
 
         def _get_more_data(self, ov, maxsize):
-            buf = ov.getbuffer()
+            buf = ov
             f = io.BytesIO()
             f.write(buf)
             left = win32.PeekNamedPipe(self._handle)[1]
@@ -361,7 +361,7 @@ if win32:
             rbytes, err = ov.GetOverlappedResult(True)
             assert err == 0
             assert rbytes == left
-            f.write(ov.getbuffer())
+            f.write(ov)
             return f
 
 

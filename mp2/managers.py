@@ -42,7 +42,7 @@ __all__ = [ 'BaseManager', 'SyncManager', 'BaseProxy', 'Token' ]
 import sys
 import threading
 import array
-import queue
+import Queue as queue
 
 from traceback import format_exc
 from . import Process, current_process, active_children, Pool, util, connection
@@ -58,13 +58,14 @@ def reduce_array(a):
 ForkingPickler.register(array.array, reduce_array)
 
 view_types = [type(getattr({}, name)()) for name in ('items','keys','values')]
-if view_types[0] is not list:       # only needed in Py3.0
-    def rebuild_as_list(obj):
-        return list, (list(obj),)
-    for view_type in view_types:
-        ForkingPickler.register(view_type, rebuild_as_list)
-        import copyreg
-        copyreg.pickle(view_type, rebuild_as_list)
+if sys.version_info[0] == 3:
+    if view_types[0] is not list:       # only needed in Py3.0
+        def rebuild_as_list(obj):
+            return list, (list(obj),)
+        for view_type in view_types:
+            ForkingPickler.register(view_type, rebuild_as_list)
+            import copyreg
+            copyreg.pickle(view_type, rebuild_as_list)
 
 #
 # Type for identifying shared objects
