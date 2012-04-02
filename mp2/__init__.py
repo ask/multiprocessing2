@@ -1,7 +1,4 @@
-"""
-Package analogous to 'threading.py' but using processes
-
-"""
+"""Package analogous to 'threading.py' but using processes."""
 #
 # multiprocessing/__init__.py
 #
