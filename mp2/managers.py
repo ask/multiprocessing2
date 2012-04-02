@@ -45,9 +45,9 @@ import array
 import queue
 
 from traceback import format_exc
-from multiprocessing import Process, current_process, active_children, Pool, util, connection
-from multiprocessing.process import AuthenticationString
-from multiprocessing.forking import exit, Popen, ForkingPickler
+from . import Process, current_process, active_children, Pool, util, connection
+from .process import AuthenticationString
+from .forking import exit, Popen, ForkingPickler
 
 #
 # Register some things for pickling

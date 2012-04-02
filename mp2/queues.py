@@ -44,10 +44,10 @@ import errno
 
 from queue import Empty, Full
 import _multiprocessing
-from multiprocessing.connection import Pipe
-from multiprocessing.synchronize import Lock, BoundedSemaphore, Semaphore, Condition
-from multiprocessing.util import debug, info, Finalize, register_after_fork
-from multiprocessing.forking import assert_spawning
+from .connection import Pipe
+from .synchronize import Lock, BoundedSemaphore, Semaphore, Condition
+from .util import debug, info, Finalize, register_after_fork
+from .forking import assert_spawning
 
 #
 # Queue type using a pipe, buffer and thread

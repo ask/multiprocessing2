@@ -44,8 +44,8 @@ import itertools
 import collections
 import time
 
-from multiprocessing import Process, cpu_count, TimeoutError
-from multiprocessing.util import Finalize, debug
+from . import Process, cpu_count, TimeoutError
+from .util import Finalize, debug
 
 #
 # Constants representing the state of a pool

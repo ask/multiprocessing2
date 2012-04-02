@@ -35,8 +35,8 @@
 import ctypes
 import weakref
 
-from multiprocessing import heap, RLock
-from multiprocessing.forking import assert_spawning, ForkingPickler
+from . import heap, RLock
+from .forking import assert_spawning, ForkingPickler
 
 __all__ = ['RawValue', 'RawArray', 'Value', 'Array', 'copy', 'synchronized']
 

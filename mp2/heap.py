@@ -40,8 +40,8 @@ import threading
 import itertools
 
 import _multiprocessing
-from multiprocessing.util import Finalize, info
-from multiprocessing.forking import assert_spawning
+from .util import Finalize, info
+from .forking import assert_spawning
 
 __all__ = ['BufferWrapper']
 

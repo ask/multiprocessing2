@@ -41,10 +41,10 @@ import socket
 import threading
 import struct
 
-from multiprocessing import current_process
-from multiprocessing.forking import Popen, duplicate, close, ForkingPickler
-from multiprocessing.util import register_after_fork, debug, sub_debug
-from multiprocessing.connection import Client, Listener, Connection
+from . import current_process
+from .forking import Popen, duplicate, close, ForkingPickler
+from .util import register_after_fork, debug, sub_debug
+from .connection import Client, Listener, Connection
 
 
 #
@@ -214,7 +214,7 @@ ForkingPickler.register(socket.socket, reduce_socket)
 #
 
 if sys.platform == 'win32':
-    from multiprocessing.connection import PipeConnection
+    from .connection import PipeConnection
 
     def reduce_pipe_connection(conn):
         rh = reduce_handle(conn.fileno())

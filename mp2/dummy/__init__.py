@@ -47,10 +47,11 @@ import sys
 import weakref
 import array
 
-from multiprocessing.dummy.connection import Pipe
 from threading import Lock, RLock, Semaphore, BoundedSemaphore
 from threading import Event, Condition
 from queue import Queue
+
+from .connection import Pipe
 
 #
 #
@@ -137,7 +138,7 @@ def shutdown():
     pass
 
 def Pool(processes=None, initializer=None, initargs=()):
-    from multiprocessing.pool import ThreadPool
+    from ..pool import ThreadPool
     return ThreadPool(processes, initializer, initargs)
 
 JoinableQueue = Queue

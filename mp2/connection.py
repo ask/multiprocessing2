@@ -32,6 +32,8 @@
 # SUCH DAMAGE.
 #
 
+from __future__ import absolute_import
+
 __all__ = [ 'Client', 'Listener', 'Pipe', 'wait' ]
 
 import io
@@ -47,9 +49,10 @@ import tempfile
 import itertools
 
 import _multiprocessing
-from multiprocessing import current_process, AuthenticationError, BufferTooShort
-from multiprocessing.util import (
-    get_temp_dir, Finalize, sub_debug, debug, _eintr_retry)
+from . import current_process, AuthenticationError, BufferTooShort
+from .util import (
+    get_temp_dir, Finalize, sub_debug, debug, _eintr_retry
+)
 try:
     from _multiprocessing import win32
     from _subprocess import WAIT_OBJECT_0, WAIT_TIMEOUT, INFINITE
@@ -884,4 +887,4 @@ else:
 
 
 # Late import because of circular import
-from multiprocessing.forking import duplicate, close
+from .forking import duplicate, close

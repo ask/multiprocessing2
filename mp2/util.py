@@ -39,7 +39,7 @@ import atexit
 import threading        # we want threading to install it's
                         # cleanup function before multiprocessing does
 
-from multiprocessing.process import current_process, active_children
+from .process import current_process, active_children
 
 __all__ = [
     'sub_debug', 'debug', 'info', 'sub_warning', 'get_logger',

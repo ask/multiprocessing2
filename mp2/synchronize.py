@@ -40,9 +40,9 @@ import threading
 import sys
 
 import _multiprocessing
-from multiprocessing.process import current_process
-from multiprocessing.util import register_after_fork, debug
-from multiprocessing.forking import assert_spawning, Popen
+from .process import current_process
+from .util import register_after_fork, debug
+from .forking import assert_spawning, Popen
 
 # Try to import the mp.synchronize module cleanly, if it fails
 # raise ImportError for platforms lacking a working sem_open implementation.

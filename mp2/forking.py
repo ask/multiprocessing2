@@ -36,7 +36,7 @@ import os
 import sys
 import signal
 
-from multiprocessing import util, process
+from . import util, process
 
 __all__ = ['Popen', 'assert_spawning', 'exit', 'duplicate', 'close', 'ForkingPickler']
 
@@ -352,7 +352,7 @@ else:
         if getattr(sys, 'frozen', False):
             return [sys.executable, '--multiprocessing-fork']
         else:
-            prog = 'from multiprocessing.forking import main; main()'
+            prog = 'from mp2.forking import main; main()'
             return [_python_exe, '-c', prog, '--multiprocessing-fork']
 
 
