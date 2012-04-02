@@ -475,6 +475,7 @@ class BaseManager(object):
             authkey = current_process().authkey
         self._address = address     # XXX not final address if eg ('', 0)
         self._authkey = AuthenticationString(authkey)
+        print("CALLING BM INIT")
         self._state = State()
         self._state.value = State.INITIAL
         self._serializer = serializer
@@ -963,19 +964,33 @@ def Array(typecode, sequence, lock=True):
 # Proxy types used by SyncManager
 #
 
-class IteratorProxy(BaseProxy):
-    _exposed_ = ('__next__', 'send', 'throw', 'close')
-    def __iter__(self):
-        return self
-    def __next__(self, *args):
-        return self._callmethod('__next__', args)
-    def send(self, *args):
-        return self._callmethod('send', args)
-    def throw(self, *args):
-        return self._callmethod('throw', args)
-    def close(self, *args):
-        return self._callmethod('close', args)
+if sys.version_info[0] == 3:
 
+    class IteratorProxy(BaseProxy):
+        _exposed_ = ('__next__', 'send', 'throw', 'close')
+        def __iter__(self):
+            return self
+        def __next__(self, *args):
+            return self._callmethod('__next__', args)
+        def send(self, *args):
+            return self._callmethod('send', args)
+        def throw(self, *args):
+            return self._callmethod('throw', args)
+        def close(self, *args):
+            return self._callmethod('close', args)
+else:
+    class IteratorProxy(BaseProxy):
+        _exposed_ = ('next', 'send', 'throw', 'close')
+        def __iter__(self):
+            return self
+        def next(self, *args):
+            return self._callmethod('next', args)
+        def send(self, *args):
+            return self._callmethod('send', args)
+        def throw(self, *args):
+            return self._callmethod('throw', args)
+        def close(self, *args):
+            return self._callmethod('close', args)
 
 class AcquirerProxy(BaseProxy):
     _exposed_ = ('acquire', 'release')

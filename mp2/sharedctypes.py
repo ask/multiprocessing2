@@ -88,11 +88,12 @@ def RawArray(typecode_or_type, size_or_initializer):
         result.__init__(*size_or_initializer)
         return result
 
-def Value(typecode_or_type, *args, lock=None):
+def Value(typecode_or_type, *args, **kwargs):
     '''
     Return a synchronization wrapper for a Value
     '''
     obj = RawValue(typecode_or_type, *args)
+    lock = kwargs.get("lock")
     if lock is False:
         return obj
     if lock in (True, None):

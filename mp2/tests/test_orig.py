@@ -418,17 +418,18 @@ class _TestSubclassingProcess(BaseTestCase):
         if self.TYPE == "threads":
             return
 
-        testfn = test.support.TESTFN
-        self.addCleanup(test.support.unlink, testfn)
-        proc = self.Process(target=self._test_stderr_flush, args=(testfn,))
-        proc.start()
-        proc.join()
-        with open(testfn, 'r') as f:
-            err = f.read()
-            # The whole traceback was printed
-            self.assertIn("ZeroDivisionError", err)
-            self.assertIn("test_orig.py", err)
-            self.assertIn("1/0 # MARKER", err)
+        import tempfile
+
+        with tempfile.NamedTemporaryFile() as fh:
+            proc = self.Process(target=self._test_stderr_flush, args=(fh.name, ))
+            proc.start()
+            proc.join()
+            with open(fh.name, 'r') as f:
+                err = f.read()
+                # The whole traceback was printed
+                self.assertIn("ZeroDivisionError", err)
+                self.assertIn("test_orig.py", err)
+                self.assertIn("1/0 # MARKER", err)
 
     @classmethod
     def _test_stderr_flush(cls, testfn):
@@ -880,8 +881,8 @@ class _TestCondition(BaseTestCase):
         cond.acquire()
         res = wait(TIMEOUT1)
         cond.release()
-        self.assertEqual(res, False)
         self.assertTimingAlmostEqual(wait.elapsed, TIMEOUT1)
+        self.assertEqual(res, None)
 
 
 class _TestEvent(BaseTestCase):
@@ -1200,12 +1201,12 @@ class _TestPool(BaseTestCase):
         it = self.pool.imap(sqr, list(range(10)))
         for i in range(10):
             self.assertEqual(next(it), i*i)
-        self.assertRaises(StopIteration, it.__next__)
+        self.assertRaises(StopIteration, it.next)
 
         it = self.pool.imap(sqr, list(range(1000)), chunksize=100)
         for i in range(1000):
             self.assertEqual(next(it), i*i)
-        self.assertRaises(StopIteration, it.__next__)
+        self.assertRaises(StopIteration, it.next)
 
     def test_imap_unordered(self):
         it = self.pool.imap_unordered(sqr, list(range(1000)))
@@ -1375,11 +1376,11 @@ def baz():
         yield i*i
 
 class IteratorProxy(BaseProxy):
-    _exposed_ = ('__next__',)
+    _exposed_ = ('next',)
     def __iter__(self):
         return self
-    def __next__(self):
-        return self._callmethod('__next__')
+    def next(self):
+        return self._callmethod('next')
 
 class MyManager(BaseManager):
     pass
@@ -2454,7 +2455,7 @@ class _file_like(object):
         self.cache.append(data)
 
     def flush(self):
-        self._delegate.write(''.join(self.cache))
+        self._delegate.write(u''.join(self.cache))
         self._cache = []
 
 class TestStdinBadfiledescriptor(unittest.TestCase):

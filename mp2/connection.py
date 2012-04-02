@@ -48,6 +48,8 @@ import time
 import tempfile
 import itertools
 
+from contextlib import closing
+
 import _multiprocessing
 from . import current_process, AuthenticationError, BufferTooShort
 from .util import (
@@ -508,8 +510,8 @@ if sys.platform != 'win32':
         '''
         if duplex:
             s1, s2 = socket.socketpair()
-            c1 = Connection(s1.detach())
-            c2 = Connection(s2.detach())
+            c1 = Connection(os.dup(s1.fileno()))
+            c2 = Connection(os.dup(s2.fileno()))
         else:
             fd1, fd2 = os.pipe()
             c1 = Connection(fd1, writable=False)
@@ -606,7 +608,7 @@ def SocketClient(address):
     Return a connection object connected to the socket given by `address`
     '''
     family = address_type(address)
-    with socket.socket( getattr(socket, family) ) as s:
+    with closing(socket.socket( getattr(socket, family) )) as s:
         s.connect(address)
         fd = duplicate(s.fileno())
     conn = Connection(fd)
@@ -757,13 +759,13 @@ def _xml_loads(s):
 class XmlListener(Listener):
     def accept(self):
         global xmlrpclib
-        import xmlrpc.client as xmlrpclib
+        import xmlrpclib
         obj = Listener.accept(self)
         return ConnectionWrapper(obj, _xml_dumps, _xml_loads)
 
 def XmlClient(*args, **kwds):
     global xmlrpclib
-    import xmlrpc.client as xmlrpclib
+    import xmlrpclib
     return ConnectionWrapper(Client(*args, **kwds), _xml_dumps, _xml_loads)
 
 #
